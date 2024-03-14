@@ -8,12 +8,13 @@
 </head>
 <body>
 
-
 <div class="container mt-5">
-    <h1 class="text-center">Toni Quetglas Despertador</h1>
+    <h1 class="text-center">¿Cuándo llegará Toni Quetglas?</h1>
 
     <div class="row mt-4">
         <div class="col text-center">
+            <hr>
+            <div id="greeting"></div>
             <h2 id="clock">00:00:00</h2>
         </div>
     </div>
@@ -34,18 +35,37 @@
         </div>
     </div>
 
+    <hr class="m-4">
+
     <div class="row mt-4">
         <div class="col">
-            <h3>Llegadas Programadas:</h3>
-            <ul id="arrivalList" class="list-group">
-                <!-- Aquí se mostrarán las llegadas programadas -->
+            <h3>Llegadas de Hoy:</h3>
+            <ul id="todayArrivals" class="list-group">
+                <!-- Aquí se mostrarán las llegadas de hoy -->
             </ul>
         </div>
     </div>
+
+    <hr class="m-4">
+
+    <div class="row mt-4">
+        <div class="col">
+            <h3>Llegadas de Mañana:</h3>
+            <ul id="tomorrowArrivals" class="list-group">
+                <!-- Aquí se mostrarán las llegadas de mañana -->
+            </ul>
+        </div>
+    </div>
+
 </div>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        const greetingDiv = document.getElementById('greeting');
+        const today = new Date();
+        const dayName = today.toLocaleDateString('es-ES', { weekday: 'long' });
+        greetingDiv.innerHTML = `<h2 class="mb-3"><strong>Buenos días, hoy es ${dayName}, ${today.toLocaleDateString()}, ¡ánimo!</strong></h2>`;
+
         function updateClock() {
             const now = new Date();
             const clock = document.getElementById('clock');
@@ -67,49 +87,66 @@
         function getCookie(name) {
             var nameEQ = name + "=";
             var ca = document.cookie.split(';');
-            for(var i=0;i < ca.length;i++) {
+            for(var i=0; i < ca.length; i++) {
                 var c = ca[i];
-                while (c.charAt(0)==' ') c = c.substring(1,c.length);
-                if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+                while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+                if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
             }
             return null;
         }
 
-        const arrivalForm = document.getElementById('arrivalForm');
-        const arrivalList = document.getElementById('arrivalList');
-
-        function addArrivalToList(name, time) {
+        function addArrivalToList(name, time, addedTime) {
             const now = new Date();
-            const id = 'arrival-' + now.getTime(); // Identificador único basado en tiempo
+            const arrivalDate = new Date(now.toDateString() + ' ' + time);
+            const tomorrow = new Date(now);
+            tomorrow.setDate(tomorrow.getDate() + 1);
+
+            let listId;
+            if (arrivalDate.toDateString() === now.toDateString()) {
+                listId = 'todayArrivals';
+            } else if (arrivalDate.toDateString() === tomorrow.toDateString()) {
+                listId = 'tomorrowArrivals';
+            } else {
+                return; // Ignorar si no es ni hoy ni mañana
+            }
+
             const listItem = document.createElement('li');
             listItem.classList.add('list-group-item');
-            listItem.id = id;
-            listItem.dataset.time = time; // Guardar la hora de llegada en el elemento
             listItem.textContent = `${name} - Llegada de Toni: ${time}`;
-            arrivalList.appendChild(listItem);
+            listItem.dataset.time = time;
+            listItem.dataset.added = addedTime || new Date().toISOString();
+            document.getElementById(listId).appendChild(listItem);
         }
 
         function updateArrivalListStyles() {
             const now = new Date();
-            document.querySelectorAll('#arrivalList .list-group-item').forEach(item => {
-                const arrivalTime = new Date('1970-01-01T' + item.dataset.time);
-                if (now > arrivalTime) {
-                    item.style.color = 'red'; // Cambiar el color a rojo
+
+            document.querySelectorAll('#todayArrivals .list-group-item').forEach(item => {
+                const itemTime = new Date(item.dataset.added.substring(0, 10) + 'T' + item.dataset.time);
+                if (now >= itemTime) {
+                    item.style.color = 'red';
+                } else {
+                    item.style.color = 'green';
                 }
             });
-        }
-        setInterval(updateArrivalListStyles, 60000); // Actualizar los estilos cada minuto
 
+            document.querySelectorAll('#tomorrowArrivals .list-group-item').forEach(item => {
+                item.style.color = 'green';
+            });
+        }
+
+        setInterval(updateArrivalListStyles, 5000); // Actualizar los estilos cada 5 segundos
+
+        const arrivalForm = document.getElementById('arrivalForm');
         arrivalForm.addEventListener('submit', function(event) {
             event.preventDefault();
             const name = document.getElementById('name').value;
             const time = document.getElementById('time').value;
-
             addArrivalToList(name, time);
 
             // Guardar en cookies
             let arrivals = JSON.parse(getCookie('arrivals') || '[]');
-            arrivals.push({ name, time });
+            arrivals.push({ name, time, added: new Date().toISOString() });
             setCookie('arrivals', JSON.stringify(arrivals), 7);
 
             arrivalForm.reset();
@@ -118,7 +155,7 @@
         // Cargar llegadas guardadas
         let savedArrivals = JSON.parse(getCookie('arrivals') || '[]');
         savedArrivals.forEach(function(arrival) {
-            addArrivalToList(arrival.name, arrival.time);
+            addArrivalToList(arrival.name, arrival.time, arrival.added);
         });
     });
 </script>
