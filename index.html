@@ -51,20 +51,57 @@
         }
         setInterval(updateClock, 1000);
 
+        // Funciones para manejar cookies
+        function setCookie(name, value, days) {
+            var expires = "";
+            if (days) {
+                var date = new Date();
+                date.setTime(date.getTime() + (days*24*60*60*1000));
+                expires = "; expires=" + date.toUTCString();
+            }
+            document.cookie = name + "=" + (value || "")  + expires + "; path=/";
+        }
+
+        function getCookie(name) {
+            var nameEQ = name + "=";
+            var ca = document.cookie.split(';');
+            for(var i=0;i < ca.length;i++) {
+                var c = ca[i];
+                while (c.charAt(0)==' ') c = c.substring(1,c.length);
+                if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+            }
+            return null;
+        }
+
         const arrivalForm = document.getElementById('arrivalForm');
         const arrivalList = document.getElementById('arrivalList');
+
+        function addArrivalToList(name, time) {
+            const listItem = document.createElement('li');
+            listItem.classList.add('list-group-item');
+            listItem.textContent = `${name} - Llegada de Toni: ${time}`;
+            arrivalList.appendChild(listItem);
+        }
 
         arrivalForm.addEventListener('submit', function(event) {
             event.preventDefault();
             const name = document.getElementById('name').value;
             const time = document.getElementById('time').value;
 
-            const listItem = document.createElement('li');
-            listItem.classList.add('list-group-item');
-            listItem.textContent = `${name} - Llegada de Toni: ${time}`;
-            arrivalList.appendChild(listItem);
+            addArrivalToList(name, time);
+
+            // Guardar en cookies
+            let arrivals = JSON.parse(getCookie('arrivals') || '[]');
+            arrivals.push({ name, time });
+            setCookie('arrivals', JSON.stringify(arrivals), 7);
 
             arrivalForm.reset();
+        });
+
+        // Cargar llegadas guardadas
+        let savedArrivals = JSON.parse(getCookie('arrivals') || '[]');
+        savedArrivals.forEach(function(arrival) {
+            addArrivalToList(arrival.name, arrival.time);
         });
     });
 </script>
