@@ -38,14 +38,6 @@
         <div class="col">
             <h3>Llegadas Programadas:</h3>
             <ul id="arrivalList" class="list-group">
-<!--                --><?php
-/*
-                foreach ($listado as $item) {
-
-                    echo $item->nombre." : ";
-                    echo $item->hora_llegada;
-                }
-                */?>
                 <!-- Aquí se mostrarán las llegadas programadas -->
             </ul>
         </div>
@@ -87,11 +79,26 @@
         const arrivalList = document.getElementById('arrivalList');
 
         function addArrivalToList(name, time) {
+            const now = new Date();
+            const id = 'arrival-' + now.getTime(); // Identificador único basado en tiempo
             const listItem = document.createElement('li');
             listItem.classList.add('list-group-item');
+            listItem.id = id;
+            listItem.dataset.time = time; // Guardar la hora de llegada en el elemento
             listItem.textContent = `${name} - Llegada de Toni: ${time}`;
             arrivalList.appendChild(listItem);
         }
+
+        function updateArrivalListStyles() {
+            const now = new Date();
+            document.querySelectorAll('#arrivalList .list-group-item').forEach(item => {
+                const arrivalTime = new Date('1970-01-01T' + item.dataset.time);
+                if (now > arrivalTime) {
+                    item.style.color = 'red'; // Cambiar el color a rojo
+                }
+            });
+        }
+        setInterval(updateArrivalListStyles, 60000); // Actualizar los estilos cada minuto
 
         arrivalForm.addEventListener('submit', function(event) {
             event.preventDefault();
