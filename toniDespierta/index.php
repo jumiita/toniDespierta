@@ -7,11 +7,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-<h1> HOLA -> AQUI ES PHP:
-<?php
-echo $listado;
-?>
-</h1>
+
 
 <div class="container mt-5">
     <h1 class="text-center">Toni Quetglas Despertador</h1>
@@ -42,6 +38,14 @@ echo $listado;
         <div class="col">
             <h3>Llegadas Programadas:</h3>
             <ul id="arrivalList" class="list-group">
+                <?php
+
+                foreach ($listado as $item) {
+
+                    echo $item->nombre." : ";
+                    echo $item->hora_llegada;
+                }
+                ?>
                 <!-- Aquí se mostrarán las llegadas programadas -->
             </ul>
         </div>

@@ -1,6 +1,5 @@
 <?php
 
-use toniDespierta\conexion;
 
 include_once 'conexion.php';
 include_once 'llegadas.php';

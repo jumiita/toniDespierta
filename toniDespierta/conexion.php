@@ -1,13 +1,12 @@
 <?php
 
-namespace toniDespierta;
 include_once 'IndexController.php';
 
 class conexion extends mysqli
 {
 
-    private $hostname = 'sldi699.piensasolutions.com';
-    private $username = "root";
+    private $hostname = 'sldi699.piensasolutions.com:3306';
+    private $username = "qaja615";
     private $password = 'Columpio1234';
     private $database = 'qaja615';
 

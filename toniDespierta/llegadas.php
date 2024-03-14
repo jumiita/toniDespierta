@@ -4,9 +4,9 @@ namespace toniDespierta;
 
 class llegadas
 {
-    private  $id;
-    private  $nombre;
-    private  $hora_llegada;
+    public  $id;
+    public  $nombre;
+    public  $hora_llegada;
 
     /**
      * @param $id
