@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Toni Quetglas Despertador</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container mt-5">
+    <h1 class="text-center">Toni Quetglas Despertador</h1>
+
+    <div class="row mt-4">
+        <div class="col text-center">
+            <h2 id="clock">00:00:00</h2>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-md-6 offset-md-3">
+            <form id="arrivalForm">
+                <div class="mb-3">
+                    <label for="name" class="form-label">Nombre:</label>
+                    <input type="text" class="form-control" id="name" required>
+                </div>
+                <div class="mb-3">
+                    <label for="time" class="form-label">Hora de llegada de Toni:</label>
+                    <input type="time" class="form-control" id="time" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Añadir</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col">
+            <h3>Llegadas Programadas:</h3>
+            <ul id="arrivalList" class="list-group">
+                <!-- Aquí se mostrarán las llegadas programadas -->
+            </ul>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        function updateClock() {
+            const now = new Date();
+            const clock = document.getElementById('clock');
+            clock.innerText = now.toLocaleTimeString();
+        }
+        setInterval(updateClock, 1000);
+
+        const arrivalForm = document.getElementById('arrivalForm');
+        const arrivalList = document.getElementById('arrivalList');
+
+        arrivalForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+            const name = document.getElementById('name').value;
+            const time = document.getElementById('time').value;
+
+            const listItem = document.createElement('li');
+            listItem.classList.add('list-group-item');
+            listItem.textContent = `${name} - Llegada de Toni: ${time}`;
+            arrivalList.appendChild(listItem);
+
+            arrivalForm.reset();
+        });
+    });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
