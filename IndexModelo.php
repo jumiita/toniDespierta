@@ -21,7 +21,7 @@ class IndexModelo
         $this->bd->close();
         $return = array();
         while ($resultado = $query->fetch_assoc()){
-            $return[] = new \toniDespierta\llegadas($resultado['id'],$resultado['nombre'],$resultado['hora_llegada']);
+            $return[] = new \llegadas($resultado['id'],$resultado['nombre'],$resultado['hora_llegada']);
         }
         return $return;
     }

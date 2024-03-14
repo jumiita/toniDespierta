@@ -1,6 +1,5 @@
 <?php
 
-namespace toniDespierta;
 
 class llegadas
 {
